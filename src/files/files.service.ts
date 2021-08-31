@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import S3 = require('aws-sdk/clients/s3');
 import { InjectAwsService } from 'src/aws/decorators/awsService.decorator';
 import { FilesRepository } from './files.repository';
@@ -26,5 +26,19 @@ export class FilesService {
       uploadResult.Key,
     );
     return file;
+  }
+
+  async deletePublicFile(fileId: number) {
+    const file = await this.filesRepository.getPublicFile(fileId);
+    if (!file) {
+      throw new NotFoundException(fileId);
+    }
+    await this.s3
+      .deleteObject({
+        Bucket: this.configService.get('AWS_PUBLIC_BUCKET_NAME'),
+        Key: file.key,
+      })
+      .promise();
+    await this.filesRepository.deletePublicFile(fileId);
   }
 }

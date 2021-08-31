@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -41,6 +42,15 @@ export class UsersRepository {
     const newUser = await this.usersRepository.create(userData);
     await this.usersRepository.save(newUser);
     return newUser;
+  }
+
+  async update(userId: number, userData: UpdateUserDto) {
+    await this.usersRepository.update(userId, userData);
+    const updatedUser = await this.getById(userId);
+    if (!updatedUser) {
+      throw new NotFoundException(userId);
+    }
+    return updatedUser;
   }
 
   async addAvatar(userId: number, avatar: { key: string; url: string }) {
