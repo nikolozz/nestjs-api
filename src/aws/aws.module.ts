@@ -4,6 +4,7 @@ import {
   IAwsOptions,
 } from './interfaces/awsModuleOptions.interface';
 import { AWS_MODULE_OPTIONS } from './constants';
+import { getAwsServiceToken } from './utils/aws.utils';
 
 @Global()
 @Module({})
@@ -18,18 +19,7 @@ export class AwsModule {
   }
 
   public static forFeature(...services: unknown[]): DynamicModule {
-    const providers = services.map((service: any) => ({
-      provide: `AWS_SERVICE_${service.serviceIdentifier}`,
-      useFactory: (options: IAwsOptions) =>
-        new service({
-          credentials: {
-            accessKeyId: options.accessKeyId,
-            secretAccessKey: options.secretAccessKey,
-          },
-          region: options.region,
-        }),
-      inject: [AWS_MODULE_OPTIONS],
-    }));
+    const providers = services.map(this.createAwsServiceProviders);
     return {
       module: AwsModule,
       providers,
@@ -42,6 +32,21 @@ export class AwsModule {
       provide: AWS_MODULE_OPTIONS,
       inject: options.inject || [],
       useFactory: options.useFactory,
+    };
+  }
+
+  private static createAwsServiceProviders(service: any): Provider {
+    return {
+      provide: getAwsServiceToken(service.serviceIdentifier),
+      useFactory: (options: IAwsOptions) =>
+        new service({
+          credentials: {
+            accessKeyId: options.accessKeyId,
+            secretAccessKey: options.secretAccessKey,
+          },
+          region: options.region,
+        }),
+      inject: [AWS_MODULE_OPTIONS],
     };
   }
 }
