@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import Address from './adress.entity';
 import Post from '../../posts/entities/post.entity';
+import PublicFile from 'src/files/entities/publicFile.entity';
 
 @Entity()
 class User {
@@ -30,6 +31,10 @@ class User {
   @OneToOne(() => Address, { eager: true, cascade: true })
   @JoinColumn()
   public adress: Address;
+
+  @OneToOne(() => PublicFile, { eager: true, nullable: true })
+  @JoinColumn()
+  public avatar: PublicFile;
 
   @OneToMany(
     () => Post,

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -36,5 +41,10 @@ export class UsersRepository {
     const newUser = await this.usersRepository.create(userData);
     await this.usersRepository.save(newUser);
     return newUser;
+  }
+
+  async addAvatar(userId: number, avatar: { key: string; url: string }) {
+    const user = await this.getById(userId);
+    await this.usersRepository.update(userId, { ...user, avatar });
   }
 }

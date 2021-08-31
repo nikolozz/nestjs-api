@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AwsModule } from './aws/aws.module';
+import { FilesModule } from './files/files.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -22,6 +23,7 @@ import * as Joi from '@hapi/joi';
         AWS_REGION: Joi.string().required(),
         AWS_ACCESS_KEY_ID: Joi.string().required(),
         AWS_SECRET_ACCESS_KEY: Joi.string().required(),
+        AWS_PUBLIC_BUCKET_NAME: Joi.string().required(),
         PORT: Joi.number(),
       }),
     }),
@@ -39,6 +41,7 @@ import * as Joi from '@hapi/joi';
     UsersModule,
     AuthenticationModule,
     CategoriesModule,
+    FilesModule,
   ],
 })
 export class AppModule {}
