@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/createUser.dto';
 import { FilesService } from '../files/files.service';
@@ -20,6 +20,30 @@ export class UsersService {
 
   create(createUserData: CreateUserDto) {
     return this.usersRepository.create(createUserData);
+  }
+
+  async getAllPrivateFilesPresignedURLs(userId: number) {
+    const userWithFiles = await this.usersRepository.getAllPrivateFiles(userId);
+    if (!userWithFiles.files) {
+      throw new NotFoundException(userId);
+    }
+    const generatedPresignedUrls = userWithFiles.files.map(file =>
+      this.filesService.generatePresignedUrl(file.key),
+    );
+    const presignedURLs = await Promise.all(generatedPresignedUrls);
+    return presignedURLs;
+  }
+
+  async getPrivateFile(fileId: number, ownerId: number) {
+    const file = await this.filesService.getPrivateFile(fileId);
+    if (file.info.owner.id !== ownerId) {
+      throw new NotFoundException(fileId);
+    }
+    return file;
+  }
+
+  addPrivateFile(userId: number, fileBuffer: Buffer, filename: string) {
+    return this.filesService.uploadPrivateFile(fileBuffer, userId, filename);
   }
 
   async addAvatar(userId: number, imageBuffer: Buffer, fileName: string) {
@@ -46,5 +70,9 @@ export class UsersService {
       });
       await this.filesService.deletePublicFile(fileId);
     }
+  }
+
+  async deleteFile(fileId: number, ownerId: number) {
+    return this.filesService.deletePrivateFile(fileId, ownerId);
   }
 }

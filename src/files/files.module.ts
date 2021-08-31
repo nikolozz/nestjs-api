@@ -6,10 +6,11 @@ import { AwsModule } from '../aws/aws.module';
 import { S3 } from 'aws-sdk';
 import { ConfigModule } from '@nestjs/config';
 import { FilesRepository } from './files.repository';
+import PrivateFile from './entities/privateFile.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PublicFile]),
+    TypeOrmModule.forFeature([PublicFile, PrivateFile]),
     AwsModule.forFeature(S3),
     ConfigModule,
   ],

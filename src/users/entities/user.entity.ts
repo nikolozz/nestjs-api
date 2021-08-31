@@ -10,6 +10,7 @@ import {
 import Address from './adress.entity';
 import Post from '../../posts/entities/post.entity';
 import PublicFile from 'src/files/entities/publicFile.entity';
+import PrivateFile from '../../files/entities/privateFile.entity';
 
 @Entity()
 class User {
@@ -41,6 +42,12 @@ class User {
     (post: Post) => post.author,
   )
   public posts: Post[];
+
+  @OneToMany(
+    () => PrivateFile,
+    (file: PrivateFile) => file.owner,
+  )
+  public files: PrivateFile[];
 }
 
 export default User;

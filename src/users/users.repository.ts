@@ -21,10 +21,7 @@ export class UsersRepository {
     if (user) {
       return user;
     }
-    throw new HttpException(
-      'User with this email does not exist',
-      HttpStatus.NOT_FOUND,
-    );
+    throw new NotFoundException(email);
   }
 
   async getById(userId: number) {
@@ -32,10 +29,11 @@ export class UsersRepository {
     if (user) {
       return user;
     }
-    throw new HttpException(
-      'User with this email does not exist',
-      HttpStatus.NOT_FOUND,
-    );
+    throw new NotFoundException(userId);
+  }
+
+  getAllPrivateFiles(userId: number) {
+    return this.usersRepository.findOne(userId, { relations: ['files'] });
   }
 
   async create(userData: CreateUserDto) {
