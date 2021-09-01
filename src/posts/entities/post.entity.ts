@@ -12,7 +12,7 @@ import Category from '../../categories/entities/category.entity';
 @Entity()
 class Post {
   @PrimaryGeneratedColumn()
-  public id: number;
+  public id?: number;
 
   @Column()
   public title: string;
@@ -25,7 +25,7 @@ class Post {
     (user: User) => user.posts,
     { eager: true },
   )
-  public author: User;
+  public author?: User;
 
   @ManyToMany(
     () => Category,
@@ -33,7 +33,7 @@ class Post {
     { eager: true, cascade: true },
   )
   @JoinTable()
-  public categories: Category[];
+  public categories?: Category[];
 }
 
 export default Post;

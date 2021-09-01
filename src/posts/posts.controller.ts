@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -20,7 +21,10 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  getAllPosts() {
+  async getPosts(@Query('search') search: string) {
+    if (search) {
+      return this.postsService.searchForPosts(search);
+    }
     return this.postsService.getAllPosts();
   }
 
@@ -40,7 +44,7 @@ export class PostsController {
 
   @Put(':id')
   @UseGuards(JwtAuthenticationGuard)
-  async replacePost(@Param('id') id: string, @Body() post: UpdatePostDto) {
+  async replacePost(@Param('id') id: number, @Body() post: UpdatePostDto) {
     return this.postsService.replacePost(Number(id), post);
   }
 

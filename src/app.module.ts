@@ -7,6 +7,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AwsModule } from './aws/aws.module';
 import { FilesModule } from './files/files.module';
+import { SearchModule } from './search/search.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -25,6 +26,9 @@ import * as Joi from '@hapi/joi';
         AWS_SECRET_ACCESS_KEY: Joi.string().required(),
         AWS_PUBLIC_BUCKET_NAME: Joi.string().required(),
         AWS_PRIVATE_BUCKET_NAME: Joi.string().required(),
+        ELASTICSEARCH_NODE: Joi.string().required(),
+        ELASTICSEARCH_USERNAME: Joi.string().required(),
+        ELASTICSEARCH_PASSWORD: Joi.string().required(),
         PORT: Joi.number(),
       }),
     }),
@@ -43,6 +47,7 @@ import * as Joi from '@hapi/joi';
     AuthenticationModule,
     CategoriesModule,
     FilesModule,
+    SearchModule,
   ],
 })
 export class AppModule {}
