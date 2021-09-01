@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/createUser.dto';
 import { FilesService } from '../files/files.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -74,5 +79,25 @@ export class UsersService {
 
   async deleteFile(fileId: number, ownerId: number) {
     return this.filesService.deletePrivateFile(fileId, ownerId);
+  }
+
+  setJwtRefreshToken(userId: number, token: string) {
+    return this.usersRepository.setJwtRefreshToken(userId, token);
+  }
+
+  async getUserFromRefreshToken(userId: number, token: string) {
+    const user = await this.getById(userId);
+    const isRefreshTokenMatches = await bcrypt.compare(
+      token,
+      user.currentHashedRefreshToken,
+    );
+    if (!isRefreshTokenMatches) {
+      throw new UnauthorizedException(userId);
+    }
+    return user;
+  }
+
+  removeJwtRefreshToken(userId: number) {
+    return this.usersRepository.removeJwtRefreshToken(userId);
   }
 }

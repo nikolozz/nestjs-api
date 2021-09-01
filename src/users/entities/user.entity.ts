@@ -25,6 +25,12 @@ class User {
   @Expose()
   public name: string;
 
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  public currentHashedRefreshToken?: string;
+
   @Column()
   @Exclude()
   public password: string;

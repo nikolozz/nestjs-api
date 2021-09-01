@@ -15,18 +15,38 @@ export class AuthenticationService {
     private readonly configService: ConfigService,
   ) {}
 
-  async getAuthenticatedUser(email: string, hashedPassword: string) {
+  async getAuthenticatedUser(email: string, password: string) {
     const user = await this.usersService.getByEmail(email);
-    await this.validatePassword(user.password, hashedPassword);
+    await this.validatePassword(user.password, password);
     return user;
   }
 
-  public getCookieWithJwtToken(userId: number) {
+  getCookieWithJwtToken(userId: number) {
     const payload: TokenPayload = { userId };
-    const token = this.jwtService.sign(payload);
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_SECRET'),
+      expiresIn: `${this.configService.get('JWT_EXPIRATION_TIME')}s`,
+    });
     return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
       'JWT_EXPIRATION_TIME',
     )}`;
+  }
+
+  getCookieWithJwtRefreshToken(userId: number) {
+    const payload: TokenPayload = { userId };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+      )}s`,
+    });
+    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
+      'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+    )}`;
+    return {
+      cookie,
+      token,
+    };
   }
 
   async register(registrationData: RegisterDto) {
@@ -52,11 +72,14 @@ export class AuthenticationService {
   }
 
   getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
+    return [
+      'Authentication=; HttpOnly; Path=/; Max-Age=0',
+      'Refresh=; HttpOnly; Path=/; Max-Age=0',
+    ];
   }
 
-  private async validatePassword(password: string, hashedPassword: string) {
-    const isPasswordMatching = await bcrypt.compare(hashedPassword, password);
+  private async validatePassword(hashedPassword: string, password: string) {
+    const isPasswordMatching = await bcrypt.compare(password, hashedPassword);
     if (!isPasswordMatching) {
       throw new HttpException(
         'Wrong credentials provided',

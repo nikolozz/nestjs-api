@@ -1,14 +1,10 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersRepository {
@@ -54,5 +50,18 @@ export class UsersRepository {
   async addAvatar(userId: number, avatar: { key: string; url: string }) {
     const user = await this.getById(userId);
     await this.usersRepository.update(userId, { ...user, avatar });
+  }
+
+  async setJwtRefreshToken(userId: number, token: string) {
+    const hashedToken = await bcrypt.hash(token, 10);
+    await this.usersRepository.update(userId, {
+      currentHashedRefreshToken: hashedToken,
+    });
+  }
+
+  removeJwtRefreshToken(userId: number) {
+    return this.usersRepository.update(userId, {
+      currentHashedRefreshToken: null,
+    });
   }
 }
