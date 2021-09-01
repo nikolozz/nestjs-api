@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import User from '../users/entities/user.entity';
 import { UsersRepository } from '../users/users.repository';
+import { FilesService } from '../files/files.service';
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
@@ -20,6 +21,7 @@ describe('AuthenticationService', () => {
   const mockedJwtService = {
     sign: () => '',
   };
+  const mockedFilesService = {};
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +29,7 @@ describe('AuthenticationService', () => {
         AuthenticationService,
         UsersService,
         UsersRepository,
+        { provide: FilesService, useValue: mockedFilesService },
         { provide: JwtService, useValue: mockedJwtService },
         { provide: ConfigService, useValue: mockedConfigService },
         {

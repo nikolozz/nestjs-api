@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import S3 = require('aws-sdk/clients/s3');
-import { InjectAwsService } from 'src/aws/decorators/awsService.decorator';
+import { InjectAwsService } from '../aws/decorators/awsService.decorator';
 import { FilesRepository } from './files.repository';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuid } from 'uuid';

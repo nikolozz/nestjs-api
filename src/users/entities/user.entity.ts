@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import Address from './adress.entity';
 import Post from '../../posts/entities/post.entity';
-import PublicFile from 'src/files/entities/publicFile.entity';
+import PublicFile from '../../files/entities/publicFile.entity';
 import PrivateFile from '../../files/entities/privateFile.entity';
 
 @Entity()
