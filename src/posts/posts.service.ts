@@ -4,6 +4,9 @@ import { UpdatePostDto } from './dto/updatePost.dto';
 import { PostsRepository } from './posts.repository';
 import User from '../users/entities/user.entity';
 import { PostsSearchService } from './postsSearch.service';
+import { PaginationParams } from '../utils/types/paginationParams';
+import { PaginationResult } from '../utils/types/paginationResult.interface';
+import Post from './entities/post.entity';
 
 @Injectable()
 export class PostsService {
@@ -12,8 +15,8 @@ export class PostsService {
     private readonly postsRepository: PostsRepository,
   ) {}
 
-  getAllPosts() {
-    return this.postsRepository.getAllPosts();
+  getAllPosts(pagination: PaginationParams): Promise<PaginationResult<Post[]>> {
+    return this.postsRepository.getAllPosts(pagination);
   }
 
   getPostById(id: number) {
@@ -32,13 +35,13 @@ export class PostsService {
     return newPost;
   }
 
-  async searchForPosts(text: string) {
-    const searchResult = await this.searchService.search(text);
-    const ids = searchResult.map(({ id }) => Number(id));
+  async searchForPosts(text: string, pagination: PaginationParams) {
+    const { results } = await this.searchService.search(text, pagination);
+    const ids = results.map(({ id }) => Number(id));
     if (!ids.length) {
       return [];
     }
-    const posts = await this.postsRepository.getAllPosts(ids);
+    const posts = await this.postsRepository.getPostsByIds(ids);
     return posts;
   }
 

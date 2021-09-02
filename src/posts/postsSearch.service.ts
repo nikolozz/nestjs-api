@@ -3,6 +3,7 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 import Post from './entities/post.entity';
 import { PostsSearchResult } from './interfaces/postSearchResult.interface';
 import { PostSearchBody } from './interfaces/postSearchBody.interface';
+import { PaginationParams } from '../utils';
 
 @Injectable()
 export class PostsSearchService {
@@ -30,20 +31,55 @@ export class PostsSearchService {
     });
   }
 
-  async search(text: string) {
+  async search(text: string, pagination?: PaginationParams) {
     const { body } = await this.elasticSearchService.search<PostsSearchResult>({
       index: this.index,
+      from: pagination?.offset,
+      size: pagination?.limit,
       body: {
         query: {
           multi_match: {
             query: text,
             fields: ['title', 'content'],
           },
+          filter: {
+            range: {
+              gt: pagination.startId || 0,
+            },
+          },
+        },
+        sort: {
+          id: {
+            order: 'asc',
+          },
         },
       },
     });
     const hits = body.hits.hits;
-    return hits.map(post => post._source);
+    const count = body.hits.total;
+    const results = hits.map(post => post._source);
+    const postsCount = pagination?.startId
+      ? await this.count(text, ['title', 'content'])
+      : count;
+    return {
+      count: postsCount,
+      results,
+    };
+  }
+
+  async count(query: string, fields: string[]) {
+    const { body } = await this.elasticSearchService.count({
+      index: this.index,
+      body: {
+        query: {
+          multi_match: {
+            query,
+            fields,
+          },
+        },
+      },
+    });
+    return body.count;
   }
 
   update(id: number, post: Post) {

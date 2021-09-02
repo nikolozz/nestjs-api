@@ -15,17 +15,21 @@ import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/updatePost.dto';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwtAuthentication.guard';
 import RequestWithUser from '../authentication/interfaces/requestWIthUser.interface';
+import { PaginationParams } from '../utils';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  async getPosts(@Query('search') search: string) {
+  async getPosts(
+    @Query('search') search: string,
+    @Query() pagination: PaginationParams,
+  ) {
     if (search) {
-      return this.postsService.searchForPosts(search);
+      return this.postsService.searchForPosts(search, pagination);
     }
-    return this.postsService.getAllPosts();
+    return this.postsService.getAllPosts(pagination);
   }
 
   @Get('search')

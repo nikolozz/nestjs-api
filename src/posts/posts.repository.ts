@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { UpdatePostDto } from './dto/updatePost.dto';
 import { CreatePostDto } from './dto/createPost.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Repository, MoreThan } from 'typeorm';
 import Post from './entities/post.entity';
 import { PostNotFoundException } from './exception/postNotFound.exception';
-import User from 'src/users/entities/user.entity';
+import User from '../users/entities/user.entity';
+import { PaginationParams } from '../utils';
 
 @Injectable()
 export class PostsRepository {
@@ -13,9 +14,27 @@ export class PostsRepository {
     @InjectRepository(Post) private readonly postsRepository: Repository<Post>,
   ) {}
 
-  getAllPosts(ids?: number[]) {
-    const findByids = ids ? { where: { id: In(ids) } } : undefined;
-    return this.postsRepository.find(findByids);
+  async getAllPosts(pagination: PaginationParams) {
+    const { startId, offset, limit } = pagination;
+
+    const { query, count: postsCount } =
+      (await this.buildKeysetPaginationQuery(startId)) || {};
+
+    const [items, count] = await this.postsRepository.findAndCount({
+      where: query,
+      order: {
+        id: 'ASC',
+      },
+      skip: offset,
+      take: limit,
+    });
+    return { items, count: startId ? postsCount : count };
+  }
+
+  getPostsByIds(ids: number[]) {
+    return this.postsRepository.find({
+      where: { id: In(ids) },
+    });
   }
 
   async getPostById(id: number) {
@@ -56,5 +75,14 @@ export class PostsRepository {
     if (!deleteResponse.affected) {
       throw new PostNotFoundException(id);
     }
+  }
+
+  private async buildKeysetPaginationQuery(startId: number | undefined) {
+    if (!startId) {
+      return;
+    }
+    const query = { id: MoreThan(startId) };
+    const count = await this.postsRepository.count();
+    return { query, count };
   }
 }
