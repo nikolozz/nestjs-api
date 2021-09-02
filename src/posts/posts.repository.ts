@@ -26,6 +26,13 @@ export class PostsRepository {
     throw new PostNotFoundException(id);
   }
 
+  getPostsByKeywords(keyword: string) {
+    return this.postsRepository.query(
+      `SELECT * from post WHERE $1 = ANY(keywords)`,
+      [keyword],
+    );
+  }
+
   async replacePost(id: number, post: UpdatePostDto) {
     await this.postsRepository.update(id, post);
     const updatedPost = await this.postsRepository.findOne(id);

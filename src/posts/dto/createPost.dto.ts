@@ -1,5 +1,4 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import Category from '../../categories/entities/category.entity';
 
 export class CreatePostDto {
   @IsString()
@@ -10,6 +9,7 @@ export class CreatePostDto {
   @IsNotEmpty()
   content: string;
 
-  // @IsOptional()
-  // categories: Category[];
+  @IsOptional()
+  @IsString({ each: true })
+  keywords: string[];
 }

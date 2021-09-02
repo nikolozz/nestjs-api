@@ -42,6 +42,10 @@ export class PostsService {
     return posts;
   }
 
+  async getPostsByKeywords(keywords: string) {
+    return this.postsRepository.getPostsByKeywords(keywords);
+  }
+
   async deletePost(id: number) {
     await Promise.all([
       this.postsRepository.deletePost(id),

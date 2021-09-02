@@ -28,6 +28,11 @@ export class PostsController {
     return this.postsService.getAllPosts();
   }
 
+  @Get('search')
+  async getPostsByKeywords(@Query('keyword') keywords: string) {
+    return this.postsService.getPostsByKeywords(keywords);
+  }
+
   @Get(':id')
   getPostById(@Param('id') id: string) {
     return this.postsService.getPostById(Number(id));

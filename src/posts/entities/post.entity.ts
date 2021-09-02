@@ -20,6 +20,9 @@ class Post {
   @Column()
   public content: string;
 
+  @Column({ type: 'text', array: true, nullable: true })
+  public keywords: string[];
+
   @ManyToOne(
     () => User,
     (user: User) => user.posts,
