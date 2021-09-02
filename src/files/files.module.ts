@@ -15,6 +15,6 @@ import PrivateFile from './entities/privateFile.entity';
     ConfigModule,
   ],
   providers: [FilesService, FilesRepository],
-  exports: [FilesService],
+  exports: [FilesService, FilesRepository],
 })
 export class FilesModule {}

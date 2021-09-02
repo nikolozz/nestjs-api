@@ -5,6 +5,7 @@ import { FilesRepository } from './files.repository';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuid } from 'uuid';
 import { PUBLIC_BUCKET, PRIVATE_BUCKET } from './contants';
+import { QueryRunner } from 'typeorm';
 
 @Injectable()
 export class FilesService {
@@ -41,6 +42,26 @@ export class FilesService {
       })
       .promise();
     await this.filesRepository.deletePublicFile(fileId);
+  }
+
+  async deletePublicFileWithQueryRunner(
+    fileId: number,
+    queryRunner: QueryRunner,
+  ) {
+    const file = await this.filesRepository.getPublicFile(fileId);
+    if (!file) {
+      throw new NotFoundException(fileId);
+    }
+    await this.s3
+      .deleteObject({
+        Bucket: this.configService.get(PUBLIC_BUCKET),
+        Key: file.key,
+      })
+      .promise();
+    await this.filesRepository.deletePublicFileWithQueryRunner(
+      fileId,
+      queryRunner,
+    );
   }
 
   async getPrivateFile(fileId: number) {

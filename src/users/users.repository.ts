@@ -1,15 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Connection, QueryRunner, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
+import { FilesRepository } from '../files/files.repository';
 
 @Injectable()
 export class UsersRepository {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    private readonly filesRepository: FilesRepository,
+    private readonly connection: Connection,
   ) {}
 
   async getByEmail(email: string) {
@@ -50,6 +57,10 @@ export class UsersRepository {
   async addAvatar(userId: number, avatar: { key: string; url: string }) {
     const user = await this.getById(userId);
     await this.usersRepository.update(userId, { ...user, avatar });
+  }
+
+  deleteAvatarWithQueryRunner(userId: number, queryRunner: QueryRunner) {
+    return queryRunner.manager.update(User, userId, { avatar: null });
   }
 
   async setJwtRefreshToken(userId: number, token: string) {

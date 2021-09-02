@@ -1,5 +1,6 @@
 import {
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -7,12 +8,14 @@ import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/createUser.dto';
 import { FilesService } from '../files/files.service';
 import * as bcrypt from 'bcrypt';
+import { Connection } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly filesService: FilesService,
+    private readonly connection: Connection,
   ) {}
 
   getByEmail(email: string) {
@@ -54,8 +57,7 @@ export class UsersService {
   async addAvatar(userId: number, imageBuffer: Buffer, fileName: string) {
     const user = await this.getById(userId);
     if (user.avatar) {
-      await this.usersRepository.update(userId, { ...user, avatar: null });
-      await this.filesService.deletePublicFile(user.avatar.id);
+      await this.deleteAvatar(userId);
     }
     const avatar = await this.filesService.uploadPublicFile(
       imageBuffer,
@@ -66,14 +68,34 @@ export class UsersService {
   }
 
   async deleteAvatar(userId: number) {
+    const queryRunner = await this.connection.createQueryRunner();
+
     const user = await this.getById(userId);
     const fileId = user.avatar?.id;
-    if (fileId) {
-      await this.usersRepository.update(userId, {
-        ...user,
-        avatar: null,
+    if (!fileId) {
+      throw new NotFoundException(fileId);
+    }
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await this.usersRepository.deleteAvatarWithQueryRunner(
+        user.id,
+        queryRunner,
+      );
+      await this.filesService.deletePublicFileWithQueryRunner(
+        user.avatar.id,
+        queryRunner,
+      );
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException({
+        message: `Transaction Failed ${error}`,
       });
-      await this.filesService.deletePublicFile(fileId);
+    } finally {
+      await queryRunner.release();
     }
   }
 

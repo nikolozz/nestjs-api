@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import PublicFile from './entities/publicFile.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import PrivateFile from './entities/privateFile.entity';
 
 @Injectable()
@@ -46,6 +46,16 @@ export class FilesRepository {
 
   async deletePublicFile(fileId: number) {
     const deleteResponse = await this.filesRepository.delete(fileId);
+    if (!deleteResponse.affected) {
+      throw new NotFoundException(fileId);
+    }
+  }
+
+  async deletePublicFileWithQueryRunner(
+    fileId: number,
+    queryRunner: QueryRunner,
+  ) {
+    const deleteResponse = await queryRunner.manager.delete(PublicFile, fileId);
     if (!deleteResponse.affected) {
       throw new NotFoundException(fileId);
     }
