@@ -17,8 +17,9 @@ export class PostsRepository {
   async getAllPosts(pagination: PaginationParams) {
     const { startId, offset, limit } = pagination;
 
-    const { query, count: postsCount } =
-      (await this.buildKeysetPaginationQuery(startId)) || {};
+    const { query, count: postsCount } = await this.buildKeysetPaginationQuery(
+      startId,
+    );
 
     const [items, count] = await this.postsRepository.findAndCount({
       where: query,
@@ -79,7 +80,7 @@ export class PostsRepository {
 
   private async buildKeysetPaginationQuery(startId: number | undefined) {
     if (!startId) {
-      return;
+      return {};
     }
     const query = { id: MoreThan(startId) };
     const count = await this.postsRepository.count();

@@ -27,6 +27,7 @@
     "@nestjs/core": "^8.0.6",
     "@nestjs/elasticsearch": "^8.0.0",
     "@nestjs/jwt": "^8.0.0",
+    "@nestjs/microservices": "^8.0.6",
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^6.7.2",
     "@nestjs/typeorm": "^8.0.2",

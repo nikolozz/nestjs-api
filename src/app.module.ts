@@ -8,6 +8,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { AwsModule } from './aws/aws.module';
 import { FilesModule } from './files/files.module';
 import { SearchModule } from './search/search.module';
+import { SubscribersModule } from './subscribers/subscribers.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -31,6 +32,8 @@ import * as Joi from '@hapi/joi';
         ELASTICSEARCH_NODE: Joi.string().required(),
         ELASTICSEARCH_USERNAME: Joi.string().required(),
         ELASTICSEARCH_PASSWORD: Joi.string().required(),
+        SUBSCRIBERS_SERVICE_HOST: Joi.string().required(),
+        SUBSCRIBERS_SERVICE_PORT: Joi.string().required(),
         PORT: Joi.number(),
       }),
     }),
@@ -50,6 +53,7 @@ import * as Joi from '@hapi/joi';
     CategoriesModule,
     FilesModule,
     SearchModule,
+    SubscribersModule,
   ],
 })
 export class AppModule {}
