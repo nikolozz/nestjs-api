@@ -4,10 +4,12 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import User from '../../users/entities/user.entity';
 import Category from '../../categories/entities/category.entity';
+import Comment from '../../comments/entities/comment.entity';
 
 @Entity()
 class Post {
@@ -37,6 +39,13 @@ class Post {
   )
   @JoinTable()
   public categories?: Category[];
+
+  @OneToMany(
+    () => Comment,
+    (comment: Comment) => comment.post,
+    { eager: true },
+  )
+  public comments?: Comment[];
 }
 
 export default Post;

@@ -9,6 +9,7 @@ import { AwsModule } from './aws/aws.module';
 import { FilesModule } from './files/files.module';
 import { SearchModule } from './search/search.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
+import { CommentsModule } from './comments/comments.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -32,8 +33,10 @@ import * as Joi from '@hapi/joi';
         ELASTICSEARCH_NODE: Joi.string().required(),
         ELASTICSEARCH_USERNAME: Joi.string().required(),
         ELASTICSEARCH_PASSWORD: Joi.string().required(),
-        RABBITMQ_DEFAULT_USER: Joi.string().required(),
-        RABBITMQ_DEFAULT_PASS: Joi.string().required(),
+        RABBITMQ_USER: Joi.string().required(),
+        RABBITMQ_PASSWORD: Joi.string().required(),
+        RABBITMQ_HOST: Joi.string().required(),
+        RABBITMQ_QUEUE_NAME: Joi.string().required(),
         PORT: Joi.number(),
       }),
     }),
@@ -54,6 +57,7 @@ import * as Joi from '@hapi/joi';
     FilesModule,
     SearchModule,
     SubscribersModule,
+    CommentsModule,
   ],
 })
 export class AppModule {}
