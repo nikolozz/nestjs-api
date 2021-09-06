@@ -27,7 +27,7 @@ export class SubscribersController {
   @Post()
   @UseGuards(JwtAuthenticationGuard)
   createSubscriber(@Body() createSubscriber: CreateSubscriberDto) {
-    return this.subscribersService.emit('create-subscriber', createSubscriber);
+    return this.subscribersService.send('create-subscriber', createSubscriber);
   }
 
   @Delete(':id')
