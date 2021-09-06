@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
-  IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -15,4 +15,8 @@ export class CreateCommentDto {
   @ValidateNested()
   @Type(() => ObjectWithId)
   post: ObjectWithId;
+
+  @IsOptional()
+  @Type(() => Number)
+  parentId?: number;
 }

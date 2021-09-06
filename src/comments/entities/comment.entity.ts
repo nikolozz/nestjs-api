@@ -3,11 +3,17 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
+  Tree,
+  TreeChildren,
+  TreeParent,
 } from 'typeorm';
 import Post from '../../posts/entities/post.entity';
 import User from '../../users/entities/user.entity';
 
 @Entity()
+@Tree('closure-table', {
+  closureTableName: 'comment_closure',
+})
 class Comment {
   @PrimaryGeneratedColumn()
   public id?: number;
@@ -26,6 +32,12 @@ class Comment {
     (user: User) => user.posts,
   )
   public author: User;
+
+  @TreeChildren()
+  public replies: Comment[];
+
+  @TreeParent({ onDelete: 'CASCADE' })
+  public parent: Comment;
 }
 
 export default Comment;

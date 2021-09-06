@@ -1,4 +1,4 @@
-import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetCommentsQuery } from '../implementations/getComments.query';

@@ -14,6 +14,8 @@ import RequestWithUser from '../authentication/interfaces/requestWIthUser.interf
 import { JwtAuthenticationGuard } from '../authentication/guards/jwtAuthentication.guard';
 import { GetCommentsDto } from './dto/getComments.dto';
 import { GetCommentsQuery } from './queries/implementations/getComments.query';
+import { GetCommentRepliesDto } from './dto/getCommentReplies.dto';
+import { GetCommentRepliesQuery } from './queries/implementations/getCommentReplies.query';
 
 @Controller('comments')
 export class CommentsController {
@@ -25,6 +27,11 @@ export class CommentsController {
   @Get()
   async getComments(@Query() { postId }: GetCommentsDto) {
     return this.queryBus.execute(new GetCommentsQuery(postId));
+  }
+
+  @Get('replies')
+  async getCommentReplies(@Query() { parentId }: GetCommentRepliesDto) {
+    return this.queryBus.execute(new GetCommentRepliesQuery(parentId));
   }
 
   @Post()
