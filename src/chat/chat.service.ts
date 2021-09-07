@@ -4,7 +4,6 @@ import { parse } from 'cookie';
 import { WsException } from '@nestjs/websockets';
 import { ChatRepository } from './chat.repository';
 import { AuthenticationService } from '../authentication/authentication.service';
-import Message from './entities/message.entity';
 import User from '../users/entities/user.entity';
 import { PaginationParams } from '../utils/types/paginationParams';
 

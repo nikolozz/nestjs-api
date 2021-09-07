@@ -14,7 +14,6 @@ import { EmailModule } from './email/email.module';
 import * as Joi from '@hapi/joi';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ChatModule } from './chat/chat.module';
-import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -69,6 +68,5 @@ import { ChatGateway } from './chat/chat.gateway';
     EmailModule,
     ChatModule,
   ],
-  providers: [ChatGateway],
 })
 export class AppModule {}

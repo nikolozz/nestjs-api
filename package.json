@@ -31,6 +31,7 @@
     "@nestjs/microservices": "^8.0.6",
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^6.7.2",
+    "@nestjs/platform-socket.io": "^8.0.6",
     "@nestjs/schedule": "^1.0.1",
     "@nestjs/typeorm": "^8.0.2",
     "@nestjs/websockets": "^8.0.6",

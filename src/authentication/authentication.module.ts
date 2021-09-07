@@ -31,6 +31,7 @@ import { JwtRefreshTokenStrategy } from './strategies/jwtRefreshToken.strategy';
     JwtStrategy,
     JwtRefreshTokenStrategy,
   ],
+  exports: [AuthenticationService],
   controllers: [AuthenticationController],
 })
 export class AuthenticationModule {}

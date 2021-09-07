@@ -5,7 +5,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { ObjectWithId } from 'src/utils/types/objectWithId.dto';
+import { ObjectWithId } from '../../utils/types/objectWithId.dto';
 
 export class CreateCommentDto {
   @IsNotEmpty()
