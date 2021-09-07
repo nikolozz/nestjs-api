@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
-import { Connection, QueryRunner, Repository } from 'typeorm';
+import { Connection, In, QueryRunner, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
@@ -33,6 +33,14 @@ export class UsersRepository {
       return user;
     }
     throw new NotFoundException(userId);
+  }
+
+  async getByIds(ids: number[]) {
+    const users = await this.usersRepository.find({ where: { id: In(ids) } });
+    if (!users.length) {
+      throw new NotFoundException();
+    }
+    return users;
   }
 
   getAllPrivateFiles(userId: number) {

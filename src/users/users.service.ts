@@ -26,6 +26,10 @@ export class UsersService {
     return this.usersRepository.getById(userId);
   }
 
+  getByIds(ids: number[]) {
+    return this.usersRepository.getByIds(ids);
+  }
+
   create(createUserData: CreateUserDto) {
     return this.usersRepository.create(createUserData);
   }

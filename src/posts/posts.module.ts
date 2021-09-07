@@ -9,6 +9,8 @@ import { PostsRepository } from './posts.repository';
 import Post from './entities/post.entity';
 import { SearchModule } from '../search/search.module';
 import { PostsResolver } from './posts.resolver';
+import { UsersModule } from '../users/users.module';
+import { PostsDataLoader } from './loaders/posts.loader';
 
 @Module({
   imports: [
@@ -24,8 +26,15 @@ import { PostsResolver } from './posts.resolver';
     }),
     TypeOrmModule.forFeature([Post]),
     SearchModule,
+    UsersModule,
   ],
   controllers: [PostsController],
-  providers: [PostsService, PostsSearchService, PostsRepository, PostsResolver],
+  providers: [
+    PostsService,
+    PostsSearchService,
+    PostsRepository,
+    PostsResolver,
+    PostsDataLoader,
+  ],
 })
 export class PostsModule {}
