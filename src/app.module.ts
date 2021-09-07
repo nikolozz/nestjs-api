@@ -14,9 +14,14 @@ import { EmailModule } from './email/email.module';
 import * as Joi from '@hapi/joi';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ChatModule } from './chat/chat.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { join } from 'path';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot({
+      autoSchemaFile: join(__dirname, 'src/schema.gql'),
+    }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().required(),
