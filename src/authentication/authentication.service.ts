@@ -49,6 +49,15 @@ export class AuthenticationService {
     };
   }
 
+  getUserFromCookie(authenticationToken: string) {
+    const payload: TokenPayload = this.jwtService.verify(authenticationToken, {
+      secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+    });
+    if (payload?.userId) {
+      return this.usersService.getById(payload?.userId);
+    }
+  }
+
   async register(registrationData: RegisterDto) {
     const hashedPassowrd = await bcrypt.hash(registrationData.password, 10);
     try {
