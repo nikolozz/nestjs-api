@@ -32,19 +32,26 @@ export class PostsSearchService {
   }
 
   async search(text: string, pagination?: PaginationParams) {
+    // TODO - Add QueryBuilder, filter without pagination.startId will return all results from range 0
     const { body } = await this.elasticSearchService.search<PostsSearchResult>({
       index: this.index,
       from: pagination?.offset,
       size: pagination?.limit,
       body: {
         query: {
-          multi_match: {
-            query: text,
-            fields: ['title', 'content'],
-          },
-          filter: {
-            range: {
-              gt: pagination.startId || 0,
+          bool: {
+            should: {
+              multi_match: {
+                query: text,
+                fields: ['title', 'paragraphs'],
+              },
+            },
+            filter: {
+              range: {
+                id: {
+                  gt: pagination?.startId || 0,
+                },
+              },
             },
           },
         },

@@ -1,5 +1,8 @@
 import {
   Body,
+  CacheInterceptor,
+  CacheKey,
+  CacheTTL,
   Controller,
   Delete,
   Get,
@@ -9,6 +12,7 @@ import {
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/createPost.dto';
@@ -16,11 +20,16 @@ import { UpdatePostDto } from './dto/updatePost.dto';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwtAuthentication.guard';
 import RequestWithUser from '../authentication/interfaces/requestWIthUser.interface';
 import { PaginationParams } from '../utils';
+import { GET_POSTS_CACHE_KEY } from './constants';
+import { HttpCacheInterceptor } from '../utils/interceptors/httpCache.interceptor';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey(GET_POSTS_CACHE_KEY)
+  @CacheTTL(120)
   @Get()
   async getPosts(
     @Query('search') search: string,
@@ -32,6 +41,9 @@ export class PostsController {
     return this.postsService.getAllPosts(pagination);
   }
 
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey(GET_POSTS_CACHE_KEY)
+  @CacheTTL(120)
   @Get('search')
   async getPostsByKeywords(@Query('keyword') keywords: string) {
     return this.postsService.getPostsByKeywords(keywords);
