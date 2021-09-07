@@ -10,7 +10,9 @@ import { FilesModule } from './files/files.module';
 import { SearchModule } from './search/search.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { CommentsModule } from './comments/comments.module';
+import { EmailModule } from './email/email.module';
 import * as Joi from '@hapi/joi';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -52,6 +54,7 @@ import * as Joi from '@hapi/joi';
         secretAccessKey: configService.get('AWS_SECRET_ACCESS_KEY'),
       }),
     }),
+    ScheduleModule.forRoot(),
     PostsModule,
     DatabaseModule,
     UsersModule,
@@ -61,6 +64,7 @@ import * as Joi from '@hapi/joi';
     SearchModule,
     SubscribersModule,
     CommentsModule,
+    EmailModule,
   ],
 })
 export class AppModule {}
