@@ -19,6 +19,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { PubSubModule } from './pub-sub/pub-sub.module';
 import { OptimizeModule } from './optimize/optimize.module';
+import { StripeModule } from './stripe/stripe.module';
+import { ChargeModule } from './charge/charge.module';
 
 @Module({
   imports: [
@@ -32,6 +34,9 @@ import { OptimizeModule } from './optimize/optimize.module';
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().required(),
+        STRIPE_SECRET_KEY: Joi.string(),
+        STRIPE_CURRENCY: Joi.string(),
+        FRONTEND_URL: Joi.string(),
         POSTGRES_HOST: Joi.string().required(),
         POSTGRES_PORT: Joi.number().required(),
         POSTGRES_USER: Joi.string().required(),
@@ -92,6 +97,8 @@ import { OptimizeModule } from './optimize/optimize.module';
     ChatModule,
     PubSubModule,
     OptimizeModule,
+    StripeModule,
+    ChargeModule,
   ],
 })
 export class AppModule {}

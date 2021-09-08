@@ -1,22 +1,17 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
-import { Connection, In, QueryRunner, Repository } from 'typeorm';
+import { In, QueryRunner, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
-import { FilesRepository } from '../files/files.repository';
+import { StripeService } from '../stripe/stripe.service';
 
 @Injectable()
 export class UsersRepository {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
-    private readonly filesRepository: FilesRepository,
-    private readonly connection: Connection,
+    private readonly stripeService: StripeService,
   ) {}
 
   async getByEmail(email: string) {
@@ -48,7 +43,14 @@ export class UsersRepository {
   }
 
   async create(userData: CreateUserDto) {
-    const newUser = await this.usersRepository.create(userData);
+    const stripeCustomer = await this.stripeService.createCustomer(
+      userData.name,
+      userData.email,
+    );
+    const newUser = await this.usersRepository.create({
+      ...userData,
+      stripeCustomerId: stripeCustomer.id,
+    });
     await this.usersRepository.save(newUser);
     return newUser;
   }

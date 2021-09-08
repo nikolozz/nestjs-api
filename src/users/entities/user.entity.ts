@@ -42,6 +42,10 @@ class User {
   @Exclude()
   public password: string;
 
+  @Column({ nullable: true })
+  @Exclude()
+  public stripeCustomerId: string;
+
   @OneToOne(() => Address, { eager: true, cascade: true })
   @JoinColumn()
   public adress: Address;
