@@ -23,6 +23,9 @@ import { PubSubModule } from './pub-sub/pub-sub.module';
     GraphQLModule.forRoot({
       autoSchemaFile: join(__dirname, 'src/schema.gql'),
       installSubscriptionHandlers: true,
+      buildSchemaOptions: {
+        dateScalarMode: 'timestamp',
+      },
     }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({

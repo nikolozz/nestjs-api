@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -50,6 +51,9 @@ class Post {
     { eager: true },
   )
   public comments?: Comment[];
+
+  @CreateDateColumn({ type: 'timestamp' })
+  public createdAt: Date;
 }
 
 export default Post;
