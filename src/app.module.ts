@@ -16,11 +16,13 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ChatModule } from './chat/chat.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
+import { PubSubModule } from './pub-sub/pub-sub.module';
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
       autoSchemaFile: join(__dirname, 'src/schema.gql'),
+      installSubscriptionHandlers: true,
     }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
@@ -72,6 +74,7 @@ import { join } from 'path';
     CommentsModule,
     EmailModule,
     ChatModule,
+    PubSubModule,
   ],
 })
 export class AppModule {}
