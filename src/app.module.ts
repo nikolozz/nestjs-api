@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BullModule } from '@nestjs/bull';
 import { PostsModule } from './posts/posts.module';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
@@ -17,6 +18,7 @@ import { ChatModule } from './chat/chat.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { PubSubModule } from './pub-sub/pub-sub.module';
+import { OptimizeModule } from './optimize/optimize.module';
 
 @Module({
   imports: [
@@ -66,6 +68,16 @@ import { PubSubModule } from './pub-sub/pub-sub.module';
         secretAccessKey: configService.get('AWS_SECRET_ACCESS_KEY'),
       }),
     }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST'),
+          port: Number(configService.get('REDIS_PORT')),
+        },
+      }),
+      inject: [ConfigService],
+    }),
     ScheduleModule.forRoot(),
     PostsModule,
     DatabaseModule,
@@ -79,6 +91,7 @@ import { PubSubModule } from './pub-sub/pub-sub.module';
     EmailModule,
     ChatModule,
     PubSubModule,
+    OptimizeModule,
   ],
 })
 export class AppModule {}

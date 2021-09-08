@@ -79,7 +79,6 @@ export class UsersRepository {
   }
 
   setTwoFactorAuthenticationSecret(secret: string, id: number) {
-    console.log(secret);
     return this.usersRepository.update(id, {
       twoFactorAuthenticationSecret: secret,
     });
