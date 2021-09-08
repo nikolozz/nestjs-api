@@ -6,6 +6,7 @@ import { PostgresErrorCode } from '../database/enums/postgresErrorCodes.enum';
 import { TokenPayload } from './interfaces/tokenPayload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { ITwoFactorAuthenticate } from './interfaces/twoFactorAuthenticate.interface';
 
 @Injectable()
 export class AuthenticationService {
@@ -21,8 +22,15 @@ export class AuthenticationService {
     return user;
   }
 
-  getCookieWithJwtToken(userId: number) {
-    const payload: TokenPayload = { userId };
+  getCookieWithJwtToken(
+    userId: number,
+    twoFactorOptions?: ITwoFactorAuthenticate,
+  ) {
+    const payload: TokenPayload = {
+      userId,
+      isSecondFactorAuthenticated:
+        twoFactorOptions?.isSecondFactorAuthenticated,
+    };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: `${this.configService.get('JWT_EXPIRATION_TIME')}s`,

@@ -1,6 +1,5 @@
 import {
   Body,
-  CacheInterceptor,
   CacheKey,
   CacheTTL,
   Controller,
@@ -17,11 +16,11 @@ import {
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/updatePost.dto';
-import { JwtAuthenticationGuard } from '../authentication/guards/jwtAuthentication.guard';
 import RequestWithUser from '../authentication/interfaces/requestWIthUser.interface';
 import { PaginationParams } from '../utils';
 import { GET_POSTS_CACHE_KEY } from './constants';
 import { HttpCacheInterceptor } from '../utils/interceptors/httpCache.interceptor';
+import JwtTwoFactorGuard from '../authentication/guards/jwtTwoFactorAuthentication.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -55,7 +54,7 @@ export class PostsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async createPost(
     @Body() post: CreatePostDto,
     @Req() request: RequestWithUser,
@@ -64,13 +63,13 @@ export class PostsController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async replacePost(@Param('id') id: number, @Body() post: UpdatePostDto) {
     return this.postsService.replacePost(Number(id), post);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async deletePost(@Param('id') id: string) {
     this.postsService.deletePost(Number(id));
   }

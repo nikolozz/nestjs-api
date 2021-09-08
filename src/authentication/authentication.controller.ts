@@ -7,6 +7,7 @@ import {
   Req,
   Res,
   SerializeOptions,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
@@ -17,12 +18,15 @@ import { Response } from 'express';
 import { JwtAuthenticationGuard } from './guards/jwtAuthentication.guard';
 import { UsersService } from '../users/users.service';
 import { JwtRefreshGuard } from './guards/jwtRefreshGuard.guard';
+import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
+import { TwoFactorAuthenticationDto } from './dto/twoFactorAuthentication.dto';
 
 @Controller()
 @SerializeOptions({ strategy: 'excludeAll' })
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
+    private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly usersService: UsersService,
   ) {}
 
@@ -30,7 +34,6 @@ export class AuthenticationController {
   @Get()
   authenticate(@Req() request: RequestWithUser) {
     const user = request.user;
-    user.password = undefined;
     return user;
   }
 
@@ -44,6 +47,9 @@ export class AuthenticationController {
   @Post('login')
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
+    if (user.isTwoFactorAuthenticationEnabled) {
+      return;
+    }
     const accessToken = this.authenticationService.getCookieWithJwtToken(
       user.id,
     );
@@ -75,5 +81,65 @@ export class AuthenticationController {
       this.authenticationService.getCookieForLogOut(),
     );
     return response.sendStatus(200);
+  }
+
+  @Post('2fa-generate')
+  @UseGuards(JwtAuthenticationGuard)
+  public async generateTwoAuth(
+    @Req() request: RequestWithUser,
+    @Res() response: Response,
+  ) {
+    const {
+      otpauthUri,
+    } = await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(
+      request.user,
+    );
+
+    return this.twoFactorAuthenticationService.pipeQrCodeStream(
+      response,
+      otpauthUri,
+    );
+  }
+
+  @Post('2fa-turn-on')
+  @UseGuards(JwtAuthenticationGuard)
+  public async turnOnTwoFactorAuthentication(
+    @Req() request: RequestWithUser,
+    @Body() { secret }: TwoFactorAuthenticationDto,
+  ) {
+    const isCodeValid = await this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
+      secret,
+      request.user,
+    );
+
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+
+    await this.usersService.turnOnTwoFactorAuthentication(request.user.id);
+  }
+
+  @Post('2fa-authenticate')
+  @HttpCode(200)
+  @UseGuards(JwtAuthenticationGuard)
+  async authenticateTwoFactor(
+    @Req() request: RequestWithUser,
+    @Body() { secret }: TwoFactorAuthenticationDto,
+  ) {
+    const isCodeValid = await this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
+      secret,
+      request.user,
+    );
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+    const accessTokenCookie = await this.authenticationService.getCookieWithJwtToken(
+      request.user.id,
+      { isSecondFactorAuthenticated: true },
+    );
+
+    request.res.setHeader('Set-Cookie', [accessTokenCookie]);
+
+    return request.user;
   }
 }

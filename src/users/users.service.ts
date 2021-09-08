@@ -111,6 +111,14 @@ export class UsersService {
     return this.usersRepository.setJwtRefreshToken(userId, token);
   }
 
+  setTwoFactorAuthenticationSecret(secret: string, id: number) {
+    return this.usersRepository.setTwoFactorAuthenticationSecret(secret, id);
+  }
+
+  turnOnTwoFactorAuthentication(id: number) {
+    return this.usersRepository.turnOnTwoFactorAuthentication(id);
+  }
+
   async getUserFromRefreshToken(userId: number, token: string) {
     const user = await this.getById(userId);
     const isRefreshTokenMatches = await bcrypt.compare(

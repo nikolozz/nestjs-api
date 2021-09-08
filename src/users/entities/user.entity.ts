@@ -31,6 +31,13 @@ class User {
   @Exclude()
   public currentHashedRefreshToken?: string;
 
+  @Column({ nullable: true })
+  @Exclude()
+  public twoFactorAuthenticationSecret?: string;
+
+  @Column({ default: false })
+  public isTwoFactorAuthenticationEnabled: boolean;
+
   @Column()
   @Exclude()
   public password: string;

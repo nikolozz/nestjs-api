@@ -53,7 +53,7 @@ class Post {
   public comments?: Comment[];
 
   @CreateDateColumn({ type: 'timestamp' })
-  public createdAt: Date;
+  public createdAt?: Date;
 }
 
 export default Post;

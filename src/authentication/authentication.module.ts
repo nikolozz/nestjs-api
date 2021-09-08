@@ -8,6 +8,8 @@ import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshTokenStrategy } from './strategies/jwtRefreshToken.strategy';
+import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
+import { JwtTwoFactorStrategy } from './strategies/jwtTwoFactor.strategy';
 
 @Module({
   imports: [
@@ -27,9 +29,11 @@ import { JwtRefreshTokenStrategy } from './strategies/jwtRefreshToken.strategy';
   ],
   providers: [
     AuthenticationService,
+    TwoFactorAuthenticationService,
     LocalStrategy,
     JwtStrategy,
     JwtRefreshTokenStrategy,
+    JwtTwoFactorStrategy,
   ],
   exports: [AuthenticationService],
   controllers: [AuthenticationController],
