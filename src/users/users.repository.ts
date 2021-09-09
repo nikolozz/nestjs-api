@@ -55,6 +55,16 @@ export class UsersRepository {
     return newUser;
   }
 
+  updateMonthlySubscriptionStatus(
+    stripeCustomerId: string,
+    monthlySubscriptionStatus: string,
+  ) {
+    return this.usersRepository.update(
+      { stripeCustomerId },
+      { monthlySubscriptionStatus },
+    );
+  }
+
   async update(userId: number, userData: UpdateUserDto) {
     await this.usersRepository.update(userId, userData);
     const updatedUser = await this.getById(userId);

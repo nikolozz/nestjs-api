@@ -18,6 +18,15 @@ export class StripeService {
     });
   }
 
+  constructEventFromPayload(signature: string, payload: Buffer) {
+    const webhookSecret = this.configService.get('STRIPE_WEBHOOK_SECRET');
+    return this.stripe.webhooks.constructEvent(
+      payload,
+      signature,
+      webhookSecret,
+    );
+  }
+
   setDefaultPaymentMethod(paymentMethodId: string, customerId: string) {
     try {
       return this.stripe.customers.update(customerId, {

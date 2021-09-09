@@ -23,6 +23,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { ChargeModule } from './charge/charge.module';
 import { CreditCardsModule } from './credit-cards/creditCards.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { StripeWebhookModule } from './stripe-webhook/stripe-webhook.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
         NODE_ENV: Joi.string().required(),
         STRIPE_SECRET_KEY: Joi.string(),
         STRIPE_CURRENCY: Joi.string(),
+        STRIPE_WEBHOOK_SECRET: Joi.string(),
         MONTHLY_SUBSCRIPTION_PRICE_ID: Joi.string(),
         FRONTEND_URL: Joi.string(),
         POSTGRES_HOST: Joi.string().required(),
@@ -104,6 +106,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
     ChargeModule,
     CreditCardsModule,
     SubscriptionsModule,
+    StripeWebhookModule,
   ],
 })
 export class AppModule {}

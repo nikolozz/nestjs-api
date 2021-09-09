@@ -134,4 +134,14 @@ export class UsersService {
   removeJwtRefreshToken(userId: number) {
     return this.usersRepository.removeJwtRefreshToken(userId);
   }
+
+  updateMonthlySubscriptionStatus(
+    stripeCustomerId: string,
+    monthlySubscriptionStatus: string,
+  ) {
+    return this.usersRepository.updateMonthlySubscriptionStatus(
+      stripeCustomerId,
+      monthlySubscriptionStatus,
+    );
+  }
 }

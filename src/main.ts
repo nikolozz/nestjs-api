@@ -4,12 +4,14 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { runInCluster } from './runInCluster';
+import rawBodyMiddleware from './utils/middleware/rawBody.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
   app.use(cookieParser());
+  app.use(rawBodyMiddleware());
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
