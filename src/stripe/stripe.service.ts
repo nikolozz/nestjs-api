@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
+import { PaymentMethodEnum } from './enums/paymentMethod.enum';
 
 @Injectable()
 export class StripeService {
@@ -16,13 +17,28 @@ export class StripeService {
     return this.stripe.customers.create({ name, email });
   }
 
-  async charge(amount: number, paymentMethodId: string, customerId: string) {
+  charge(amount: number, paymentMethodId: string, customerId: string) {
     return this.stripe.paymentIntents.create({
       amount,
       customer: customerId,
       payment_method: paymentMethodId,
       currency: this.configService.get('STRIPE_CURRENCY'),
       confirm: true,
+      off_session: true,
+    });
+  }
+
+  attachCreditCard(paymentMethodId: string, customerId: string) {
+    return this.stripe.setupIntents.create({
+      payment_method: paymentMethodId,
+      customer: customerId,
+    });
+  }
+
+  listCreditCards(customerId: string) {
+    return this.stripe.paymentMethods.list({
+      customer: customerId,
+      type: PaymentMethodEnum.Card,
     });
   }
 }

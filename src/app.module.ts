@@ -21,6 +21,7 @@ import { PubSubModule } from './pub-sub/pub-sub.module';
 import { OptimizeModule } from './optimize/optimize.module';
 import { StripeModule } from './stripe/stripe.module';
 import { ChargeModule } from './charge/charge.module';
+import { CreditCardsModule } from './credit-cards/creditCards.module';
 
 @Module({
   imports: [
@@ -99,6 +100,7 @@ import { ChargeModule } from './charge/charge.module';
     OptimizeModule,
     StripeModule,
     ChargeModule,
+    CreditCardsModule,
   ],
 })
 export class AppModule {}
