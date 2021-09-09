@@ -22,6 +22,7 @@ import { OptimizeModule } from './optimize/optimize.module';
 import { StripeModule } from './stripe/stripe.module';
 import { ChargeModule } from './charge/charge.module';
 import { CreditCardsModule } from './credit-cards/creditCards.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { CreditCardsModule } from './credit-cards/creditCards.module';
         NODE_ENV: Joi.string().required(),
         STRIPE_SECRET_KEY: Joi.string(),
         STRIPE_CURRENCY: Joi.string(),
+        MONTHLY_SUBSCRIPTION_PRICE_ID: Joi.string(),
         FRONTEND_URL: Joi.string(),
         POSTGRES_HOST: Joi.string().required(),
         POSTGRES_PORT: Joi.number().required(),
@@ -101,6 +103,7 @@ import { CreditCardsModule } from './credit-cards/creditCards.module';
     StripeModule,
     ChargeModule,
     CreditCardsModule,
+    SubscriptionsModule,
   ],
 })
 export class AppModule {}

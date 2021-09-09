@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { StripeService } from '../stripe/stripe.service';
 import { AddCreditCardDto } from './dto/createCreditCard.dto';
+import { SetDefaultCreditCardDto } from './dto/setDefaultCreditCard.dto';
 import JwtTwoFactorGuard from '../authentication/guards/jwtTwoFactorAuthentication.guard';
 import RequestWithUser from '../authentication/interfaces/requestWIthUser.interface';
 
@@ -12,11 +21,23 @@ export class CreditCardsController {
   @UseGuards(JwtTwoFactorGuard)
   attachCreditCard(
     @Req() request: RequestWithUser,
-    @Body() creditCard: AddCreditCardDto,
+    @Body() { paymentMethodId }: AddCreditCardDto,
   ) {
-    const { paymentMethodId } = creditCard;
     const customerId = request.user.stripeCustomerId;
     return this.stripeService.attachCreditCard(paymentMethodId, customerId);
+  }
+
+  @Post('default')
+  @HttpCode(200)
+  @UseGuards(JwtTwoFactorGuard)
+  setDefaultCreditCard(
+    @Req() request: RequestWithUser,
+    { paymentMethodId }: SetDefaultCreditCardDto,
+  ) {
+    return this.stripeService.setDefaultPaymentMethod(
+      paymentMethodId,
+      request.user.stripeCustomerId,
+    );
   }
 
   @Get()
