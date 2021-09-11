@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -117,6 +118,17 @@ export class UsersService {
 
   turnOnTwoFactorAuthentication(id: number) {
     return this.usersRepository.turnOnTwoFactorAuthentication(id);
+  }
+
+  async markEmailAsConfirmed(email: string) {
+    const user = await this.getByEmail(email);
+    if (!user) {
+      throw new NotFoundException(email);
+    }
+    if (user.isEmailVerified) {
+      throw new BadRequestException('Email already confirmed');
+    }
+    return this.usersRepository.markEmailAsConfirmed(user.id);
   }
 
   async getUserFromRefreshToken(userId: number, token: string) {

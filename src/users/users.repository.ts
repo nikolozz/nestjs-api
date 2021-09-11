@@ -83,6 +83,10 @@ export class UsersRepository {
     return queryRunner.manager.update(User, userId, { avatar: null });
   }
 
+  markEmailAsConfirmed(userId: number) {
+    return this.usersRepository.update(userId, { isEmailVerified: true });
+  }
+
   async setJwtRefreshToken(userId: number, token: string) {
     const hashedToken = await bcrypt.hash(token, 10);
     await this.usersRepository.update(userId, {

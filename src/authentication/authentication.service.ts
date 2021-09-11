@@ -7,11 +7,13 @@ import { TokenPayload } from './interfaces/tokenPayload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ITwoFactorAuthenticate } from './interfaces/twoFactorAuthenticate.interface';
+import { EmailConfirmationService } from '../email-confirmation/emailConfirmation.service';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     private readonly usersService: UsersService,
+    private readonly emailConfirmationService: EmailConfirmationService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -73,8 +75,12 @@ export class AuthenticationService {
         ...registrationData,
         password: hashedPassowrd,
       });
+      await this.emailConfirmationService.sendVerificationLink(
+        registrationData.email,
+      );
       return createdUser;
     } catch (error) {
+      console.log(error);
       if (error?.code === PostgresErrorCode.UniqueViolation) {
         throw new HttpException(
           'User with that email already exists',

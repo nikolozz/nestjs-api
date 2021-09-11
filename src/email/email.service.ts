@@ -9,7 +9,8 @@ export class EmailService {
 
   constructor(private readonly configService: ConfigService) {
     this.nodeMailerTransport = createTransport({
-      service: this.configService.get('EMAIL_SERVICE'),
+      host: this.configService.get('EMAIL_HOST'),
+      port: this.configService.get('EMAIL_PORT'),
       auth: {
         user: this.configService.get('EMAIL_USER'),
         pass: this.configService.get('EMAIL_PASSWORD'),

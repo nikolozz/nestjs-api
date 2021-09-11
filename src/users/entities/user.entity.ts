@@ -38,6 +38,9 @@ class User {
   @Column({ default: false })
   public isTwoFactorAuthenticationEnabled: boolean;
 
+  @Column({ default: false })
+  public isEmailVerified: boolean;
+
   @Column()
   @Exclude()
   public password: string;

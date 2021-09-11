@@ -24,6 +24,7 @@ import { ChargeModule } from './charge/charge.module';
 import { CreditCardsModule } from './credit-cards/creditCards.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { StripeWebhookModule } from './stripe-webhook/stripe-webhook.module';
+import { EmailConfirmationModule } from './email-confirmation/emailConfirmation.module';
 
 @Module({
   imports: [
@@ -51,6 +52,9 @@ import { StripeWebhookModule } from './stripe-webhook/stripe-webhook.module';
         JWT_EXPIRATION_TIME: Joi.string().required(),
         JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        JWT_VERIFICATION_TOKEN_SECRET: Joi.string().required(),
+        JWT_VERIFICATION_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        EMAIL_CONFIRMATION_URL: Joi.string().required(),
         TWO_FACTOR_AUTHENTICATION_APP_NAME: Joi.string().required(),
         AWS_REGION: Joi.string().required(),
         AWS_ACCESS_KEY_ID: Joi.string().required(),
@@ -107,6 +111,7 @@ import { StripeWebhookModule } from './stripe-webhook/stripe-webhook.module';
     CreditCardsModule,
     SubscriptionsModule,
     StripeWebhookModule,
+    EmailConfirmationModule,
   ],
 })
 export class AppModule {}

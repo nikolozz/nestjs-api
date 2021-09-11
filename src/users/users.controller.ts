@@ -12,22 +12,25 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
-import { JwtAuthenticationGuard } from '../authentication/guards/jwtAuthentication.guard';
 import RequestWithUser from '../authentication/interfaces/requestWIthUser.interface';
 import { Express, Response } from 'express';
+import JwtTwoFactorGuard from '../authentication/guards/jwtTwoFactorAuthentication.guard';
+import { EmailConfirmationGuard } from '../authentication/guards/emailConfirmation.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('files')
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(EmailConfirmationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   getAllFiles(@Req() req: RequestWithUser) {
     return this.usersService.getAllPrivateFilesPresignedURLs(req.user.id);
   }
 
   @Get('file/:id')
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(EmailConfirmationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async getFile(
     @Param('id') fileId: number,
     @Req() req: RequestWithUser,
@@ -38,7 +41,8 @@ export class UsersController {
   }
 
   @Post('avatar')
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(EmailConfirmationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   @UseInterceptors(FileInterceptor('file'))
   addAvatar(
     @Req() req: RequestWithUser,
@@ -52,7 +56,8 @@ export class UsersController {
   }
 
   @Post('file')
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(EmailConfirmationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   @UseInterceptors(FileInterceptor('file'))
   addFile(
     @Req() req: RequestWithUser,
@@ -66,7 +71,8 @@ export class UsersController {
   }
 
   @Delete('file/:id')
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(EmailConfirmationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   public deleteFile(@Param('id') fileId: number, @Req() req: RequestWithUser) {
     return this.usersService.deleteFile(fileId, req.user.id);
   }

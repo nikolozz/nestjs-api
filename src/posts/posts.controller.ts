@@ -21,6 +21,7 @@ import { PaginationParams } from '../utils';
 import { GET_POSTS_CACHE_KEY } from './constants';
 import { HttpCacheInterceptor } from '../utils/interceptors/httpCache.interceptor';
 import JwtTwoFactorGuard from '../authentication/guards/jwtTwoFactorAuthentication.guard';
+import { EmailConfirmationGuard } from '../authentication/guards/emailConfirmation.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -54,6 +55,7 @@ export class PostsController {
   }
 
   @Post()
+  @UseGuards(EmailConfirmationGuard)
   @UseGuards(JwtTwoFactorGuard)
   async createPost(
     @Body() post: CreatePostDto,
@@ -63,12 +65,14 @@ export class PostsController {
   }
 
   @Put(':id')
+  @UseGuards(EmailConfirmationGuard)
   @UseGuards(JwtTwoFactorGuard)
   async replacePost(@Param('id') id: number, @Body() post: UpdatePostDto) {
     return this.postsService.replacePost(Number(id), post);
   }
 
   @Delete(':id')
+  @UseGuards(EmailConfirmationGuard)
   @UseGuards(JwtTwoFactorGuard)
   async deletePost(@Param('id') id: string) {
     this.postsService.deletePost(Number(id));

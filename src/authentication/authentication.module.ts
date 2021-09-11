@@ -10,6 +10,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshTokenStrategy } from './strategies/jwtRefreshToken.strategy';
 import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { JwtTwoFactorStrategy } from './strategies/jwtTwoFactor.strategy';
+import { EmailConfirmationModule } from '../email-confirmation/emailConfirmation.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { JwtTwoFactorStrategy } from './strategies/jwtTwoFactor.strategy';
         },
       }),
     }),
+    EmailConfirmationModule,
   ],
   providers: [
     AuthenticationService,
