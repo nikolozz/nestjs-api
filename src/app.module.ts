@@ -25,6 +25,7 @@ import { CreditCardsModule } from './credit-cards/creditCards.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { StripeWebhookModule } from './stripe-webhook/stripe-webhook.module';
 import { EmailConfirmationModule } from './email-confirmation/emailConfirmation.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -54,7 +55,14 @@ import { EmailConfirmationModule } from './email-confirmation/emailConfirmation.
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
         JWT_VERIFICATION_TOKEN_SECRET: Joi.string().required(),
         JWT_VERIFICATION_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        EMAIL_HOST: Joi.string().required(),
+        EMAIL_PORT: Joi.string().required(),
+        EMAIL_USER: Joi.string().required(),
+        EMAIL_PASSWORD: Joi.string().required(),
         EMAIL_CONFIRMATION_URL: Joi.string().required(),
+        TWILIO_ACCOUNT_SID: Joi.string().required(),
+        TWILIO_AUTH_TOKEN: Joi.string().required(),
+        TWILIO_VERIFICATION_SERVICE_SID: Joi.string().required(),
         TWO_FACTOR_AUTHENTICATION_APP_NAME: Joi.string().required(),
         AWS_REGION: Joi.string().required(),
         AWS_ACCESS_KEY_ID: Joi.string().required(),
@@ -112,6 +120,7 @@ import { EmailConfirmationModule } from './email-confirmation/emailConfirmation.
     SubscriptionsModule,
     StripeWebhookModule,
     EmailConfirmationModule,
+    SmsModule,
   ],
 })
 export class AppModule {}

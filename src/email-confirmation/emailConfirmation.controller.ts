@@ -11,7 +11,6 @@ export class EmailConfirmationController {
 
   @Get()
   verifyEmail(@Query('token') token: string) {
-    console.log(token);
     return this.emailConfirmationService.verifyEmail(token);
   }
 

@@ -18,12 +18,13 @@ class User {
   public id?: number;
 
   @Column({ unique: true })
-  @Expose()
   public email: string;
 
   @Column()
-  @Expose()
   public name: string;
+
+  @Column({ nullable: true })
+  public phoneNumber: string;
 
   @Column({
     nullable: true,
@@ -40,6 +41,9 @@ class User {
 
   @Column({ default: false })
   public isEmailVerified: boolean;
+
+  @Column({ default: false })
+  public isPhoneNumberConfirmed: boolean;
 
   @Column()
   @Exclude()

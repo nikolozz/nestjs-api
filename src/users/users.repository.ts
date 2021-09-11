@@ -87,6 +87,12 @@ export class UsersRepository {
     return this.usersRepository.update(userId, { isEmailVerified: true });
   }
 
+  markPhoneNumberAsConfirmed(userId: number) {
+    return this.usersRepository.update(userId, {
+      isPhoneNumberConfirmed: true,
+    });
+  }
+
   async setJwtRefreshToken(userId: number, token: string) {
     const hashedToken = await bcrypt.hash(token, 10);
     await this.usersRepository.update(userId, {

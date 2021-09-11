@@ -131,6 +131,10 @@ export class UsersService {
     return this.usersRepository.markEmailAsConfirmed(user.id);
   }
 
+  markPhoneNumberAsConfirmed(userId: number) {
+    return this.usersRepository.markPhoneNumberAsConfirmed(userId);
+  }
+
   async getUserFromRefreshToken(userId: number, token: string) {
     const user = await this.getById(userId);
     const isRefreshTokenMatches = await bcrypt.compare(

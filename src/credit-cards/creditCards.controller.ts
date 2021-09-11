@@ -13,12 +13,14 @@ import { SetDefaultCreditCardDto } from './dto/setDefaultCreditCard.dto';
 import JwtTwoFactorGuard from '../authentication/guards/jwtTwoFactorAuthentication.guard';
 import RequestWithUser from '../authentication/interfaces/requestWIthUser.interface';
 import { EmailConfirmationGuard } from '../authentication/guards/emailConfirmation.guard';
+import { PhoneNumberVerifiedGuard } from '../authentication/guards/phoneConfirmation.guard';
 
 @Controller('credit-cards')
 export class CreditCardsController {
   constructor(private readonly stripeService: StripeService) {}
 
   @Post()
+  @UseGuards(PhoneNumberVerifiedGuard)
   @UseGuards(EmailConfirmationGuard)
   @UseGuards(JwtTwoFactorGuard)
   attachCreditCard(
@@ -31,6 +33,7 @@ export class CreditCardsController {
 
   @Post('default')
   @HttpCode(200)
+  @UseGuards(PhoneNumberVerifiedGuard)
   @UseGuards(EmailConfirmationGuard)
   @UseGuards(JwtTwoFactorGuard)
   setDefaultCreditCard(
@@ -44,6 +47,7 @@ export class CreditCardsController {
   }
 
   @Get()
+  @UseGuards(PhoneNumberVerifiedGuard)
   @UseGuards(EmailConfirmationGuard)
   @UseGuards(JwtTwoFactorGuard)
   async getCreditCards(@Req() request: RequestWithUser) {
